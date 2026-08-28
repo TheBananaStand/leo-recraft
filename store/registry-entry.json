@@ -12,7 +12,7 @@
     "command": "npx",
     "args": [
       "-y",
-      "https://github.com/TheBananaStand/leo-recraft-mcp/archive/b68ff13848790e87d589159eb18ebe9ba4be02f7.tar.gz"
+      "https://github.com/TheBananaStand/leo-recraft-mcp/archive/ba30d389360069ad7a2f193b7aaf4f394df346e8.tar.gz"
     ]
   },
   "descriptor": {
