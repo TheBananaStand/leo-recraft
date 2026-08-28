@@ -194,15 +194,30 @@ const TOOLS = {
         prompt: { type: "string" },
         size: { type: "string", description: "WxH, e.g. 1024x1024." },
         quality: { type: "string" },
+        // Hints the hub forwards when the caller had a preference. Optional by
+        // design — a caller with no opinion sends neither and gets the default.
+        model: { type: "string", description: "Recraft model id." },
+        style: { type: "string", description: "Recraft style name." },
       },
       required: ["prompt"],
     },
-    run: async ({ prompt, size }) => {
-      const answer = await postJson("/images/generations", generationBody({ prompt, size }));
+    run: async ({ prompt, size, model, style }) => {
+      const answer = await postJson(
+        "/images/generations",
+        generationBody({ prompt, size, model, style }),
+      );
       const [url] = urlsFrom(answer);
       if (!url) throw new Error("Recraft returned no image URL");
       const bytes = await fetchBytes(url);
-      return { image_base64: bytes.toString("base64"), format: "png" };
+      // The format is read from the model that was actually used, not assumed:
+      // a `_vector` model answers with SVG, and the caller rasterizes on the
+      // strength of this field. Saying "png" for an SVG produces a file that is
+      // named right and cannot be decoded.
+      const isVector = typeof model === "string" && model.endsWith("_vector");
+      return {
+        image_base64: bytes.toString("base64"),
+        format: isVector ? "svg" : "png",
+      };
     },
   },
 
