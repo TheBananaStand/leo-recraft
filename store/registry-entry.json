@@ -10,20 +10,37 @@
   "mcp": {
     "transport": "stdio",
     "command": "npx",
-    "args": ["-y", "https://github.com/TheBananaStand/leo-recraft-mcp/archive/PIN_ME.tar.gz"]
+    "args": [
+      "-y",
+      "https://github.com/TheBananaStand/leo-recraft-mcp/archive/b68ff13848790e87d589159eb18ebe9ba4be02f7.tar.gz"
+    ]
   },
   "descriptor": {
-    "provides": ["image_gen"],
+    "provides": [
+      "image_gen"
+    ],
     "fields": [
-      { "key": "recraft_api_key", "label": "API Key", "field_type": "password", "required": true }
+      {
+        "key": "recraft_api_key",
+        "label": "API Key",
+        "field_type": "password",
+        "required": true
+      }
     ],
     "entitlements": {
-      "settings_read": ["recraft_api_key"],
-      "network": ["external.api.recraft.ai"],
+      "settings_read": [
+        "recraft_api_key"
+      ],
+      "network": [
+        "external.api.recraft.ai"
+      ],
       "sends": [
         {
           "to": "external.api.recraft.ai",
-          "classes": ["prompts", "photos"],
+          "classes": [
+            "prompts",
+            "photos"
+          ],
           "purpose": "The prompt you asked for an image from, and — for vectorize and background removal — the image file you pointed at. Nothing else from Leo travels with it."
         }
       ]
