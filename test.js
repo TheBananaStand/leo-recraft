@@ -9,7 +9,7 @@
 
 process.env.LEO_RECRAFT_MCP_NO_SERVE = "1";
 
-const { hexToRgb, generationBody, urlsFrom, imageUrlFrom, missingRequired } =
+const { hexToRgb, generationBody, urlsFrom, imageUrlFrom, missingRequired, apiErrorMessage } =
   await import("./index.js");
 const assert = await import("node:assert/strict");
 
@@ -118,4 +118,33 @@ const assert = await import("node:assert/strict");
   assert.deepEqual(missingRequired("generate", { prompt: "x" }), []);
 }
 
-console.log("ok — palette, request body and response shapes hold");
+// ── error bodies ────────────────────────────────────────────────────────────
+{
+  // Recraft's message is often empty; the code is the whole of what it says.
+  // The one seen in the wild — an account out of credits — must name the fix,
+  // not arrive as a JSON blob the owner has to decode.
+  const credits = apiErrorMessage(400, '{"code":"not_enough_credits","message":""}');
+  assert.match(credits, /no credits left/);
+  assert.match(credits, /recraft\.ai/);
+  assert.match(credits, /^Recraft API 400/);
+
+  // A rejected key points at where the key lives.
+  assert.match(apiErrorMessage(401, "Unauthorized"), /API key was rejected/);
+  assert.match(apiErrorMessage(403, ""), /API key was rejected/);
+
+  // An unknown code keeps the vendor's own words.
+  assert.equal(
+    apiErrorMessage(422, '{"code":"invalid_style","message":"style not allowed"}'),
+    "Recraft API 422 (invalid_style: style not allowed)",
+  );
+  assert.equal(apiErrorMessage(400, '{"message":"bad size"}'), "Recraft API 400 (bad size)");
+
+  // Not JSON at all: an HTML page or nothing. No crash, status still named.
+  assert.equal(apiErrorMessage(502, "<html>Bad Gateway</html>"), "Recraft API 502: <html>Bad Gateway</html>");
+  assert.equal(apiErrorMessage(500, ""), "Recraft API 500");
+  assert.equal(apiErrorMessage(500, undefined), "Recraft API 500");
+  // A JSON body that is not an object (an array, a string) is not an error shape.
+  assert.equal(apiErrorMessage(400, '["x"]'), 'Recraft API 400: ["x"]');
+}
+
+console.log("ok — palette, request body, response shapes and error bodies hold");

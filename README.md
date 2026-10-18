@@ -54,6 +54,10 @@ The test covers what fails *quietly* — the API's own errors are loud:
   other's shape and you get nothing, silently — and a `data` that is present but
   not an array survives `?? []` and then throws on `.map`, turning a bad
   response into a crashed tool. (That one was a real bug, caught by this test.)
+- **Error bodies.** Recraft's `message` is often empty, so a failure can be the
+  whole of `{"code":"not_enough_credits","message":""}`. The known codes are
+  spelled out as something the owner can act on (an account out of credits, a
+  rejected key); unknown ones keep the vendor's words.
 
 ## Publishing
 

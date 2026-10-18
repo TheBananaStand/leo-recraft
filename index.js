@@ -124,6 +124,46 @@ function apiKey() {
   return key;
 }
 
+/**
+ * A Recraft error body, as a sentence the person who reads it can act on.
+ *
+ * Recraft answers `{code, message}`, and `message` is often empty — the whole
+ * of what a 400 says can be `{"code":"not_enough_credits","message":""}`.
+ * Passed up raw, that reached the gallery as a 500 and the agent as a blob of
+ * JSON, and what the owner was told was that image generation had failed,
+ * not that their account had run dry. The codes this spells out are the ones
+ * whose fix is on the owner's side; anything else keeps the code and message
+ * so the vendor's own words survive.
+ */
+export function apiErrorMessage(status, body) {
+  let code = "";
+  let message = "";
+  try {
+    const parsed = JSON.parse(body);
+    if (parsed && typeof parsed === "object") {
+      if (typeof parsed.code === "string") code = parsed.code;
+      if (typeof parsed.message === "string") message = parsed.message;
+    }
+  } catch {
+    // Not JSON — an HTML error page or an empty body. Fall through.
+  }
+
+  const known = {
+    not_enough_credits:
+      "your Recraft account has no credits left. Add credits at recraft.ai and try again",
+  };
+  if (known[code]) return `Recraft API ${status} (${code}): ${known[code]}.`;
+  if (status === 401 || status === 403) {
+    return `Recraft API ${status}: the API key was rejected. Check it in Settings → Packages → Recraft.`;
+  }
+  if (code || message) {
+    const detail = [code, message].filter(Boolean).join(": ");
+    return `Recraft API ${status} (${detail})`;
+  }
+  const text = String(body ?? "").trim().slice(0, 200);
+  return text ? `Recraft API ${status}: ${text}` : `Recraft API ${status}`;
+}
+
 async function recraft(path, init) {
   const response = await fetch(`${BASE}${path}`, {
     ...init,
@@ -131,7 +171,7 @@ async function recraft(path, init) {
   });
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    throw new Error(`Recraft API ${response.status}: ${detail.slice(0, 200)}`);
+    throw new Error(apiErrorMessage(response.status, detail));
   }
   return await response.json();
 }
