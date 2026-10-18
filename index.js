@@ -347,7 +347,7 @@ export function missingRequired(name, args) {
 }
 
 const server = new Server(
-  { name: "leo-recraft-mcp", version: "1.0.0" },
+  { name: "leo-recraft", version: "1.0.0" },
   { capabilities: { tools: {} } },
 );
 

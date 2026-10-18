@@ -1,10 +1,10 @@
 {
-  "name": "leo-recraft-mcp",
+  "name": "leo-recraft",
   "version": "1.0.0",
   "description": "Recraft image generation as a Leo package, over MCP.",
   "type": "module",
   "bin": {
-    "leo-recraft-mcp": "index.js"
+    "leo-recraft": "index.js"
   },
   "main": "index.js",
   "files": [

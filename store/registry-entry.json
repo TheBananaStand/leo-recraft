@@ -5,14 +5,14 @@
   "icon": "palette",
   "version": "1.0.0",
   "author": "TheBananaStand",
-  "homepage": "https://github.com/TheBananaStand/leo-recraft-mcp",
+  "homepage": "https://github.com/TheBananaStand/leo-recraft",
   "category": "package",
   "mcp": {
     "transport": "stdio",
     "command": "npx",
     "args": [
       "-y",
-      "https://github.com/TheBananaStand/leo-recraft-mcp/archive/c95118f833c8b2f0348bdaab288d123258d1fbf4.tar.gz"
+      "https://github.com/TheBananaStand/leo-recraft/archive/c95118f833c8b2f0348bdaab288d123258d1fbf4.tar.gz"
     ]
   },
   "descriptor": {

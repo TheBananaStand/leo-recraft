@@ -1,4 +1,4 @@
-# leo-recraft-mcp
+# leo-recraft
 
 Recraft as a Leo package, over MCP — image generation, vectorizing and
 background removal, from [Recraft](https://recraft.ai).
